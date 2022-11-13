@@ -1,2 +1,2 @@
 # fp2projeto
- Projeto feito na graduação - JSF / PrimeFaces / Mysql 
+ Projeto feito na graduação - JSF / JPA / PrimeFaces / Mysql 
