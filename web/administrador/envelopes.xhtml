@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <h:head>
+        <h:outputStylesheet library = "css" name="default.css"/>
+        <h:outputStylesheet library = "css" name="cssLayout.css"/>
+        <h:outputStylesheet library = "css" name="primeflex.min.css"/>
+
+        <title>IFSP BANK - Envelopes</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top">
+            <ui:insert name="top">
+
+                <h:form>
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+                    <p:toolbar id="menu">
+
+                        <f:facet name="left">
+
+                            <p:menubar>
+                                <p:menuitem value="Início" action="home.xhtml" icon="pi pi-fw pi-home"/>
+                                <p:submenu label="Menu" icon="pi pi-fw pi-align-justify">
+                                    <p:menuitem value="Usuários" action="usuarios.xhtml" icon="pi pi-fw pi-globe"/>
+                                    <p:menuitem value="Clientes" action="clientes.xhtml" icon="pi pi-fw pi-users"/>
+                                    <p:menuitem value="Contas" action="contas.xhtml" icon="pi pi-fw pi-wallet"/>
+                                    <p:menuitem value="Agências" action="agencias.xhtml" icon="pi pi-fw pi-home"/>
+                                    <p:menuitem value="Envelopes" action="envelopes.xhtml" icon="pi pi-fw pi-envelope"/>
+                                    <p:menuitem value="Movimentações" action ="movimentacoes.xhtml" icon="pi pi-fw pi-money-bill"/>
+                                </p:submenu>
+                            </p:menubar>
+                        </f:facet>
+                        <f:facet name="right">
+
+                            <p:commandButton value="#{loginController.usuarioPesquisado.nomeUsuario}" action="#{loginController.deslogar}" icon="pi pi-fw pi-sign-out" />
+
+                        </f:facet>
+                    </p:toolbar>
+
+                    <p:sticky target="menu"/>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+
+            <ui:insert name="content">
+
+                <h:form id="form">
+
+                    <div class="card">
+                        <p:growl id="messages" showDetail="true"/>
+
+
+                        <p:toolbar>
+
+                            <p:toolbarGroup>
+                                <p:commandButton value="Novo" icon="pi pi-plus" actionListener="#{envelopeController.criarNovo}"
+                                                 update=":form:manage-envelope-content" oncomplete="PF('manageEnvelopeDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target=":form:manage-envelope-content"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <p:dataTable id="dt-envelopes" widgetVar="dtEnvelopes" var="envelope" value="#{envelopeController.listaEnvelopes}"
+                                     reflow="true"
+                                     selection="#{envelopeController.envelopeSelecionado}" rowKey="#{envelope.codigo}" paginator="true"
+                                     rows="10" paginatorPosition="bottom" editable="true" style="margin-bottom:20px">
+
+                            <p:ajax event="rowEdit" listener="#{envelopeController.onRowEdit}" update=":form:messages"/>
+                            <p:ajax event="rowEditCancel" listener="#{envelopeController.onRowEditCancel}" update=":form:messages"/>
+
+                            <p:column headerText="Código">
+                                <h:outputText value="#{envelope.codigo}"/>
+                            </p:column> 
+
+                            <p:column headerText="Conta Destino">
+                                <h:outputText value="#{envelope.contaDestino.numero}"/>
+                            </p:column> 
+
+
+                            <p:column headerText="Valor">
+                                <h:outputText value="#{envelope.valor}"/>
+                            </p:column> 
+
+
+                            <p:column headerText="Data">
+                                <h:outputText value="#{envelope.data}"/>
+                            </p:column>
+
+                            <p:column headerText="Data Verificação">
+                                <h:outputText value="#{envelope.verificacao}"/>
+                            </p:column>
+
+
+                            <p:column style="width:12rem">
+                                <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteEnvelopeDialog').show()">
+                                    <f:setPropertyActionListener value="#{envelope}" target="#{envelopeController.envelopeSelecionado}"/>
+
+                                </p:commandButton>
+                            </p:column>
+                            
+                            <p:column headerText="Confirmar">
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-thumbs-up" process="@this"
+                                                 oncomplete="PF('confirmaEnvelopeDialog').show()">
+                                    <f:setPropertyActionListener value="#{envelope}" target="#{envelopeController.envelopeSelecionado}"/>
+                                     </p:commandButton>
+                            </p:column>
+                            
+
+                        </p:dataTable>
+
+                        <p:confirmDialog widgetVar="deleteEnvelopeDialog" showEffect="fade" width="300"
+                                         message="Deletar esse envelope?" header="Confirmar" severity="warn">
+                            <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{envelopeController.deletarEnvelope}"
+                                             process="@this" oncomplete="PF('deleteEnvelopeDialog').hide()"/>
+                            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteEnvelopeDialog').hide()"/>
+                        </p:confirmDialog>
+                        
+                        <p:confirmDialog widgetVar="confirmaEnvelopeDialog" showEffect="fade" width="300"
+                                         message="Confirmar esse envelope?" header="Confirmar" severity="info">
+                            <p:commandButton value="Sim" icon="pi pi-check" actionListener="#{envelopeController.confirmarEnvelope}"
+                                             process="@this" oncomplete="PF('confirmaEnvelopeDialog').hide()"/>
+                            <p:commandButton value="Não" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('confirmaEnvelopeDialog').hide()"/>
+                        </p:confirmDialog>
+
+
+                        <p:dialog header="Novo Envelope" showEffect="fade" modal="true"
+                                  widgetVar="manageEnvelopeDialog" responsive="true">
+                            <p:outputPanel id="manage-envelope-content" class="ui-fluid">
+
+
+                                <div class="p-field p-col-12 p-md-4">
+                                    <p:outputLabel for="@next" value="Selecione a conta destino"/>
+                                    <p:selectOneMenu id="group2" value="#{envelopeController.selectContaDestino}">
+                                        <f:selectItem itemLabel="Selecione" itemValue=""/>
+                                        <f:selectItems value="#{envelopeController.selectContas}"/>
+                                    </p:selectOneMenu>
+                                </div>                                               
+
+                                <div class="p-field">
+                                    <p:outputLabel for="valor">Valor</p:outputLabel>
+                                    <p:inputText id="valor" value="#{envelopeController.novoEnvelope.valor}"/>           
+                                </div>
+
+                            </p:outputPanel>
+
+                            <f:facet name="footer">
+                                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{envelopeController.salvarNovo}"
+                                                 update="manage-envelope-content" process="manage-envelope-content @this"/>
+                                <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageEnvelopeDialog').hide()"
+                                                 class="ui-button-secondary"/>
+                            </f:facet>
+                        </p:dialog>
+
+                    </div>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+    </h:body>
+
+</html>

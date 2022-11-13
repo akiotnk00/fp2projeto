@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+  <persistence-unit name="fp2projetoPU" transaction-type="JTA">
+    <jta-data-source>java:app/jdbc/myDatasource</jta-data-source>
+    <class>br.edu.ifsp.pep.modelo.Agencia</class>
+    <class>br.edu.ifsp.pep.modelo.Cliente</class>
+    <class>br.edu.ifsp.pep.modelo.Conta</class>
+    <class>br.edu.ifsp.pep.modelo.Envelope</class>
+    <class>br.edu.ifsp.pep.modelo.Movimentacao</class>
+    <class>br.edu.ifsp.pep.modelo.Usuario</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+    </properties>
+  </persistence-unit>
+</persistence>

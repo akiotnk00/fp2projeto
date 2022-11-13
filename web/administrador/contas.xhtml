@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <h:head>
+        <h:outputStylesheet library = "css" name="default.css"/>
+        <h:outputStylesheet library = "css" name="cssLayout.css"/>
+        <h:outputStylesheet library = "css" name="primeflex.min.css"/>
+
+        <title>IFSP BANK - Contas</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top">
+            <ui:insert name="top">
+
+                <h:form>
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+                    <p:toolbar id="menu">
+
+                        <f:facet name="left">
+
+                            <p:menubar>
+                                <p:menuitem value="Início" action="home.xhtml" icon="pi pi-fw pi-home"/>
+                                <p:submenu label="Menu" icon="pi pi-fw pi-align-justify">
+                                    <p:menuitem value="Usuários" action="usuarios.xhtml" icon="pi pi-fw pi-globe"/>
+                                    <p:menuitem value="Clientes" action="clientes.xhtml" icon="pi pi-fw pi-users"/>
+                                    <p:menuitem value="Contas" action="contas.xhtml" icon="pi pi-fw pi-wallet"/>
+                                    <p:menuitem value="Agências" action="agencias.xhtml" icon="pi pi-fw pi-home"/>
+                                    <p:menuitem value="Envelopes" action="envelopes.xhtml" icon="pi pi-fw pi-envelope"/>
+                                    <p:menuitem value="Movimentações" action ="movimentacoes.xhtml" icon="pi pi-fw pi-money-bill"/>
+                                </p:submenu>
+                            </p:menubar>
+                        </f:facet>
+                        <f:facet name="right">
+
+                            <p:commandButton value="#{loginController.usuarioPesquisado.nomeUsuario}" action="#{loginController.deslogar}" icon="pi pi-fw pi-sign-out" />
+
+                        </f:facet>
+                    </p:toolbar>
+
+                    <p:sticky target="menu"/>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+
+            <ui:insert name="content">
+
+                <h:form id="form">
+
+                    <div class="card">
+                        <p:growl id="messages" showDetail="true"/>
+
+
+                        <p:toolbar>
+
+                            <p:toolbarGroup>
+                                <p:commandButton value="Novo" icon="pi pi-plus" actionListener="#{contaController.criarNovo}"
+                                                 update=":form:manage-conta-content" oncomplete="PF('manageContaDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target=":form:manage-conta-content"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <p:dataTable id="dt-contas" widgetVar="dtContas" var="conta" value="#{contaController.listaContas}"
+                                     reflow="true"
+                                     selection="#{contaController.contaSelecionada}" rowKey="#{conta.numero}" paginator="true"
+                                     rows="10" paginatorPosition="bottom" editable="true" style="margin-bottom:20px">
+
+                            <p:ajax event="rowEdit" listener="#{contaController.onRowEdit}" update=":form:messages"/>
+                            <p:ajax event="rowEditCancel" listener="#{contaController.onRowEditCancel}" update=":form:messages"/>
+
+                            <p:column headerText="Número">
+                                <h:outputText value="#{conta.numero}"/>
+                            </p:column> 
+
+
+                            <p:column headerText="Agência">
+                                <h:outputText value="#{conta.agencia.numero}"/>
+                            </p:column> 
+
+
+                            <p:column headerText="Cliente">
+                                <h:outputText value="#{conta.cliente.nomeCompleto}"/>
+                            </p:column>
+
+                            <p:column headerText="Saldo">
+                                <h:outputText value="#{conta.calculaSaldo()}"/>
+                            </p:column>
+
+                            <p:column headerText="Limite">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{conta.limite}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{conta.limite}" style="width:100%" label="Limite"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Possui movimentações?">
+                                <h:outputText value="#{conta.possuiMovimentacoes()}"/>
+                            </p:column> 
+
+                            <p:column style="width:12rem">
+                                <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteContaDialog').show()">
+                                    <f:setPropertyActionListener value="#{conta}" target="#{contaController.contaSelecionada}"/>
+
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:confirmDialog widgetVar="deleteContaDialog" showEffect="fade" width="300"
+                                         message="Deletar essa conta?" header="Confirmar" severity="warn">
+                            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{contaController.deletarConta}"
+                                             process="@this" oncomplete="PF('deleteContaDialog').hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteContaDialog').hide()"/>
+                        </p:confirmDialog>
+
+
+                        <p:dialog header="Dados da Conta" showEffect="fade" modal="true"
+                                  widgetVar="manageContaDialog" responsive="true">
+                            <p:outputPanel id="manage-conta-content" class="ui-fluid">
+
+                                <div class="p-field p-col-12 p-md-4">
+                                    <p:outputLabel for="@next" value="Cliente"/>
+                                    <p:selectOneMenu id="group" value="#{contaController.selectCliente}">
+                                        <f:selectItem itemLabel="Selecione" itemValue=""/>
+                                        <f:selectItems value="#{contaController.selectClientes}"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+                                <div class="p-field p-col-12 p-md-4">
+                                    <p:outputLabel for="@next" value="Agência"/>
+                                    <p:selectOneMenu id="group2" value="#{contaController.selectAgencia}">
+                                        <f:selectItem itemLabel="Selecione" itemValue=""/>
+                                        <f:selectItems value="#{contaController.selectAgencias}"/>
+                                    </p:selectOneMenu>
+                                </div>
+
+
+                                <div class="p-field">
+                                    <p:outputLabel for="saldo">Saldo</p:outputLabel>
+                                    <p:inputText id="saldo" value="#{contaController.contaNova.saldo}"/>           
+                                </div>
+
+                                <div class="p-field">
+                                    <p:outputLabel for="limite">Limite</p:outputLabel>
+                                    <p:inputText id="limite" value="#{contaController.contaNova.limite}"/>           
+                                </div>
+                            </p:outputPanel>
+
+                            <f:facet name="footer">
+                                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{contaController.salvarNova}"
+                                                 update="manage-conta-content" process="manage-conta-content @this"/>
+                                <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageContaDialog').hide()"
+                                                 class="ui-button-secondary"/>
+                            </f:facet>
+                        </p:dialog>
+
+                    </div>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+    </h:body>
+
+</html>

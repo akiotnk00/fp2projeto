@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+
+    <h:head>
+        <h:outputStylesheet library = "css" name="default.css"/>
+        <h:outputStylesheet library = "css" name="cssLayout.css"/>
+        <h:outputStylesheet library = "css" name="primeflex.min.css"/>
+
+        <title>IFSP BANK - Clientes</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top">
+            <ui:insert name="top">
+
+                <h:form>
+                    <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+                    <p:toolbar id="menu">
+
+                        <f:facet name="left">
+
+                            <p:menubar>
+                                <p:menuitem value="Início" action="home.xhtml" icon="pi pi-fw pi-home"/>
+                                <p:submenu label="Menu" icon="pi pi-fw pi-align-justify">
+                                    <p:menuitem value="Usuários" action="usuarios.xhtml" icon="pi pi-fw pi-globe"/>
+                                    <p:menuitem value="Clientes" action="clientes.xhtml" icon="pi pi-fw pi-users"/>
+                                    <p:menuitem value="Contas" action="contas.xhtml" icon="pi pi-fw pi-wallet"/>
+                                    <p:menuitem value="Agências" action="agencias.xhtml" icon="pi pi-fw pi-home"/>
+                                    <p:menuitem value="Envelopes" action="envelopes.xhtml" icon="pi pi-fw pi-envelope"/>
+                                    <p:menuitem value="Movimentações" action ="movimentacoes.xhtml" icon="pi pi-fw pi-money-bill"/>
+                                </p:submenu>
+                            </p:menubar>
+                        </f:facet>
+                        <f:facet name="right">
+
+                            <p:commandButton value="#{loginController.usuarioPesquisado.nomeUsuario}" action="#{loginController.deslogar}" icon="pi pi-fw pi-sign-out" />
+
+                        </f:facet>
+                    </p:toolbar>
+
+                    <p:sticky target="menu"/>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+        <div id="content" class="center_content">
+
+            <ui:insert name="content">
+
+                <h:form id="form">
+
+                    <div class="card">
+                        <p:growl id="messages" showDetail="true"/>
+
+
+                        <p:toolbar>
+
+                            <p:toolbarGroup>
+                                <p:commandButton value="Novo" icon="pi pi-plus" actionListener="#{clienteController.criarNovo}"
+                                                 update=":form:manage-cliente-content" oncomplete="PF('manageClienteDialog').show()"
+                                                 styleClass="ui-button-success" style="margin-right: .5rem">
+                                    <p:resetInput target=":form:manage-cliente-content"/>
+                                </p:commandButton>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                        <p:dataTable id="dt-clientes" widgetVar="dtClientes" var="cliente" value="#{clienteController.listaClientes}"
+                                     reflow="true"
+                                     selection="#{clienteController.clienteSelecionado}" rowKey="#{cliente.codigo}" paginator="true"
+                                     rows="10" paginatorPosition="bottom" editable="true" style="margin-bottom:20px">
+
+                            <p:ajax event="rowEdit" listener="#{clienteController.onRowEdit}" update=":form:messages"/>
+                            <p:ajax event="rowEditCancel" listener="#{clienteController.onRowEditCancel}" update=":form:messages"/>
+
+                            <p:column headerText="CPF">
+                                <h:outputText value="#{cliente.cpf}"/>
+                            </p:column> 
+
+
+                            <p:column headerText="Nome Completo">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{cliente.nomeCompleto}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{cliente.nomeCompleto}" style="width:100%" label="Nome Completo"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Senha">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{cliente.senha}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{cliente.senha}" style="width:100%" label="Senha"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Telefone">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{cliente.telefone}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{cliente.telefone}" style="width:100%" label="Telefone"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Endereço">
+                                <p:cellEditor>
+                                    <f:facet name="output">
+                                        <h:outputText value="#{cliente.endereco}"/>
+                                    </f:facet>
+                                    <f:facet name="input">
+                                        <p:inputText value="#{cliente.endereco}" style="width:100%" label="Endereço"/>
+                                    </f:facet>
+                                </p:cellEditor>
+                            </p:column>
+
+                            <p:column headerText="Possui Contas?">
+                                <h:outputText value="#{cliente.possuiContas()}"/>
+                            </p:column> 
+
+                            <p:column style="width:12rem">
+                                <p:rowEditor editTitle="Edit Row" cancelTitle="Cancel Edit" saveTitle="Save Row"/>
+                                <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                                 oncomplete="PF('deleteUsuarioDialog').show()">
+                                    <f:setPropertyActionListener value="#{cliente}" target="#{clienteController.clienteSelecionado}"/>
+
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+
+                        <p:confirmDialog widgetVar="deleteClienteDialog" showEffect="fade" width="300"
+                                         message="Deletar esse cliente?" header="Confirmar" severity="warn">
+                            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{clienteController.deletarCliente}"
+                                             process="@this" oncomplete="PF('deleteClienteDialog').hide()"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                             onclick="PF('deleteClienteDialog').hide()"/>
+                        </p:confirmDialog>
+
+
+                        <p:dialog header="Dados do Cliente" showEffect="fade" modal="true"
+                                  widgetVar="manageClienteDialog" responsive="true">
+                            <p:outputPanel id="manage-cliente-content" class="ui-fluid">
+                                <div class="p-field">
+                                    <p:outputLabel for="cpf">CPF</p:outputLabel>
+                                    <p:inputText required="true" id="cpf" value="#{clienteController.clienteNovo.cpf}"/>           
+                                </div>
+                                <div class="p-field">
+                                    <p:outputLabel for="nomeCompleto">Nome Completo</p:outputLabel>
+                                    <p:inputText required="true" id="nomeCompleto" value="#{clienteController.clienteNovo.nomeCompleto}"/>           
+                                </div>
+
+                                <div class="p-field">
+                                    <p:outputLabel for="senha">Senha</p:outputLabel>
+                                    <p:inputText required="true" id="senha" value="#{clienteController.clienteNovo.senha}"/>           
+                                </div>
+
+                                <div class="p-field">
+                                    <p:outputLabel for="telefone">Telefone</p:outputLabel>
+                                    <p:inputText required="true" id="telefone" value="#{clienteController.clienteNovo.telefone}"/>           
+                                </div>
+                                
+                                 <div class="p-field">
+                                    <p:outputLabel for="endereco">Endereço</p:outputLabel>
+                                    <p:inputText required="true" id="endereco" value="#{clienteController.clienteNovo.endereco}"/>           
+                                </div>
+                                
+                            </p:outputPanel>
+
+                            <f:facet name="footer">
+                                <p:commandButton value="Salvar" icon="pi pi-check" actionListener="#{clienteController.salvarNovo}"
+                                                 update="manage-cliente-content" process="manage-cliente-content @this"/>
+                                <p:commandButton value="Cancelar" icon="pi pi-times" onclick="PF('manageClienteDialog').hide()"
+                                                 class="ui-button-secondary"/>
+                            </f:facet>
+                        </p:dialog>
+
+                    </div>
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+    </h:body>
+
+</html>
