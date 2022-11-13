@@ -114,4 +114,5 @@ public class LoginController implements Serializable {
         return "/index?faces-redirect=true";
 
     }
+
 }

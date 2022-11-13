@@ -78,37 +78,5 @@ public class ClienteController implements Serializable {
         this.clienteNovo = new Cliente();
     }
 
-    public Cliente getClienteNovo() {
-        return clienteNovo;
-    }
-
-    public void setClienteNovo(Cliente clienteNovo) {
-        this.clienteNovo = clienteNovo;
-    }
-
-    public Cliente getClienteSelecionado() {
-        return clienteSelecionado;
-    }
-
-    public void setClienteSelecionado(Cliente clienteSelecionado) {
-        this.clienteSelecionado = clienteSelecionado;
-    }
-
-    public ClienteDAO getClienteDAO() {
-        return clienteDAO;
-    }
-
-    public void setClienteDAO(ClienteDAO clienteDAO) {
-        this.clienteDAO = clienteDAO;
-    }
-
-    public List<Cliente> getListaClientes() {
-        return listaClientes;
-    }
-
-    public void setListaClientes(List<Cliente> listaClientes) {
-        this.listaClientes = listaClientes;
-    }
-
     
 }

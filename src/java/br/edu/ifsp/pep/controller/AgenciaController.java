@@ -76,38 +76,4 @@ public class AgenciaController implements Serializable{
     public void criarNova(){
         this.agenciaNova = new Agencia();
     }
-
-    public AgenciaDAO getAgenciaDAO() {
-        return agenciaDAO;
-    }
-
-    public void setAgenciaDAO(AgenciaDAO agenciaDAO) {
-        this.agenciaDAO = agenciaDAO;
-    }
-
-    public List<Agencia> getListaAgencias() {
-        return listaAgencias;
-    }
-
-    public void setListaAgencias(List<Agencia> listaAgencias) {
-        this.listaAgencias = listaAgencias;
-    }
-
-    public Agencia getAgenciaSelecionada() {
-        return agenciaSelecionada;
-    }
-
-    public void setAgenciaSelecionada(Agencia agenciaSelecionada) {
-        this.agenciaSelecionada = agenciaSelecionada;
-    }
-
-    public Agencia getAgenciaNova() {
-        return agenciaNova;
-    }
-
-    public void setAgenciaNova(Agencia agenciaNova) {
-        this.agenciaNova = agenciaNova;
-    }
-    
-    
 }

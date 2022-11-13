@@ -89,36 +89,4 @@ public class UsuarioController implements Serializable {
         this.usuarioNovo = new Usuario();
     }
 
-    public Usuario getUsuarioNovo() {
-        return usuarioNovo;
-    }
-
-    public void setUsuarioNovo(Usuario usuarioNovo) {
-        this.usuarioNovo = usuarioNovo;
-    }
-
-    public Usuario getUsuarioSelecionado() {
-        return usuarioSelecionado;
-    }
-
-    public void setUsuarioSelecionado(Usuario usuarioSelecionado) {
-        this.usuarioSelecionado = usuarioSelecionado;
-    }
-
-    public UsuarioDAO getUsuarioDAO() {
-        return usuarioDAO;
-    }
-
-    public void setUsuarioDAO(UsuarioDAO usuarioDAO) {
-        this.usuarioDAO = usuarioDAO;
-    }
-
-    public List<Usuario> getListaUsuarios() {
-        return listaUsuarios;
-    }
-
-    public void setListaUsuarios(List<Usuario> listaUsuarios) {
-        this.listaUsuarios = listaUsuarios;
-    }
-
 }
